@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Mercado Casa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+
+  :root {
+    --verde: #2d6a4f;
+    --verde-claro: #52b788;
+    --verde-bg: #d8f3dc;
+    --amarillo: #f4a261;
+    --rojo: #e63946;
+    --gris: #f1f3f4;
+    --gris-texto: #6b7280;
+    --blanco: #ffffff;
+    --sombra: 0 2px 12px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f0faf3;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--verde);
+    color: white;
+    padding: 20px 16px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .header p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+  .contador-header {
+    background: var(--amarillo);
+    color: white;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  /* TABS DE VISTA */
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid #e5e7eb;
+    position: sticky;
+    top: 90px;
+    z-index: 99;
+  }
+  .tab {
+    flex: 1;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--gris-texto);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab.activo {
+    color: var(--verde);
+    border-bottom-color: var(--verde);
+  }
+
+  /* CONTENIDO */
+  .contenido { padding: 12px 12px; }
+
+  /* CATEGORÍA */
+  .categoria {
+    margin-bottom: 16px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+  }
+  .categoria-header {
+    background: var(--verde);
+    color: white;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .categoria-header .emoji { font-size: 1.3rem; }
+  .categoria-header .badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+  }
+  .categoria-items { padding: 8px; }
+
+  /* ITEM */
+  .item {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    border-radius: 12px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+    background: #f8fffe;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .item:active { transform: scale(0.98); }
+  .item.necesita {
+    background: #fff8e7;
+    border-color: var(--amarillo);
+  }
+  .item.tiene {
+    background: #f0faf3;
+    border-color: var(--verde-claro);
+    opacity: 0.6;
+  }
+
+  .item-check {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    background: white;
+  }
+  .item.necesita .item-check {
+    background: var(--amarillo);
+    border-color: var(--amarillo);
+  }
+  .item.tiene .item-check {
+    background: var(--verde-claro);
+    border-color: var(--verde-claro);
+  }
+
+  .item-nombre {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-left: 12px;
+    flex: 1;
+  }
+  .item.tiene .item-nombre {
+    text-decoration: line-through;
+    color: var(--gris-texto);
+  }
+
+  .item-estado {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .item.necesita .item-estado {
+    background: var(--amarillo);
+    color: white;
+  }
+  .item.tiene .item-estado {
+    background: var(--verde-claro);
+    color: white;
+  }
+  .item:not(.necesita):not(.tiene) .item-estado {
+    background: #e5e7eb;
+    color: #9ca3af;
+  }
+
+  /* CANTIDAD */
+  .cantidad-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .btn-cant {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    color: #374151;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-cant:active { transform: scale(0.9); }
+  .item.necesita .btn-cant {
+    background: var(--amarillo);
+    color: white;
+  }
+  .cant-num {
+    font-size: 1rem;
+    font-weight: 900;
+    min-width: 20px;
+    text-align: center;
+    color: #1f2937;
+  }
+  .item.necesita .cant-num { color: #92400e; }
+
+  .lista-item-cant {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--amarillo);
+    flex-shrink: 0;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  /* LISTA DE COMPRAS */
+  .lista-compras { padding: 12px; }
+  .lista-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--verde);
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+  .lista-item {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    border-left: 4px solid var(--amarillo);
+  }
+  .lista-item-cat {
+    font-size: 0.75rem;
+    color: var(--gris-texto);
+    font-weight: 700;
+    background: var(--gris);
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .lista-item-nombre {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1f2937;
+  }
+
+  .vacio {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--gris-texto);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .vacio .icono { font-size: 3rem; margin-bottom: 12px; }
+
+  /* BOTÓN RESET */
+  .btn-reset {
+    background: white;
+    border: 2px solid #e5e7eb;
+    color: var(--gris-texto);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    display: block;
+    margin: 16px auto 0;
+    transition: all 0.2s;
+  }
+  .btn-reset:active { background: #fee2e2; border-color: var(--rojo); color: var(--rojo); }
+
+  /* FOOTER ACCIÓN */
+  .footer-accion {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 12px 16px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  .btn-accion {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-accion:active { transform: scale(0.97); }
+  .btn-ver-lista {
+    background: var(--verde);
+    color: white;
+  }
+  .btn-compartir {
+    background: var(--amarillo);
+    color: white;
+  }
+
+  /* OCULTAR SECCIÓN */
+  .seccion { display: none; }
+  .seccion.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🛒 Mercado Casa</h1>
+  <p>Marca lo que falta comprar</p>
+  <div class="contador-header" id="contadorHeader">0 productos para comprar</div>
+</div>
+
+<div class="tabs">
+  <div class="tab activo" onclick="mostrarTab('inventario')" id="tab-inventario">📦 Todo</div>
+  <div class="tab" onclick="mostrarTab('lista')" id="tab-lista">🛒 Lista</div>
+</div>
+
+<div class="seccion visible" id="sec-inventario">
+  <div class="contenido" id="contenido-inventario"></div>
+</div>
+
+<div class="seccion" id="sec-lista">
+  <div class="lista-compras" id="contenido-lista"></div>
+</div>
+
+<div class="footer-accion">
+  <button class="btn-accion btn-ver-lista" onclick="mostrarTab('lista')">Ver lista 🛒</button>
+  <button class="btn-accion btn-compartir" onclick="compartirLista()">Compartir 📤</button>
+</div>
+
+<script>
+const CATEGORIAS = [
+  {
+    nombre: "Granos y Harinas",
+    emoji: "🌾",
+    items: ["Arroz","Lenteja","Garbanzo","Frijoles","Harina arepa","Harina de trigo","Harina pancakes","Pasta","Semilla chía","Maizena"]
+  },
+  {
+    nombre: "Aceites y Salsas",
+    emoji: "🫙",
+    items: ["Aceite oliva","Aceite normal","Ghee","Salsa soya","Maní","Marañones","Salsa boloñesa","Salsa tomate","Mayonesa","Vinagre"]
+  },
+  {
+    nombre: "Lácteos y Huevos",
+    emoji: "🧀",
+    items: ["Yoghurt griego","Queso tajado","Queso bloque","Queso suizo","Queso costeño","Queso 7 cueros","Queso provolone","Huevos","Suero costeño","Queso crema"]
+  },
+  {
+    nombre: "Carnes y Proteínas",
+    emoji: "🐟",
+    items: ["Pescado Tilapia","Salmón","Camarones","Tocineta","Nuggets","Atún","Bonyurt"]
+  },
+  {
+    nombre: "Congelados",
+    emoji: "❄️",
+    items: ["Maíz dulce","Verdura congelada","Papas francesas","Arándanos naturales","Waffles"]
+  },
+  {
+    nombre: "Panadería y Cereales",
+    emoji: "🍞",
+    items: ["Pan brioche","Galletas","Fruit Loops","Maíz pira"]
+  },
+  {
+    nombre: "Lácteos líquidos",
+    emoji: "🥛",
+    items: ["Leche"]
+  },
+  {
+    nombre: "Despensa",
+    emoji: "🧂",
+    items: ["Sal","Azúcar","Tomates lata","Caldo de gallina","Limones","Patacones","Aceitunas negras","Pimientos en frasco","Tomates secos","Bocadillos"]
+  },
+  {
+    nombre: "Especias",
+    emoji: "🌶️",
+    items: ["Ajo pasta","Pimentón pasta","Pimienta","Canela polvo","Jengibre polvo","Tomillo","Paprika"]
+  },
+  {
+    nombre: "Vinos y Bebidas",
+    emoji: "🍷",
+    items: ["Vino","Tónicas","Coca-Cola botellas pequeñas"]
+  },
+  {
+    nombre: "Aseo Hogar",
+    emoji: "🧹",
+    items: ["Papel higiénico","Scott","Servilletas","Jabón líquido loza","Detergente líquido","Soflan","Jabón ropa delicada coco","Bolsas verdes","Bolsas blancas","Bolsas negras","Sabras verdes"]
+  },
+  {
+    nombre: "Aseo Personal",
+    emoji: "🪥",
+    items: ["Listerine","Crema dientes","Guantes","Jabón manos"]
+  }
+];
+
+const KEY = 'mercado_jackie_v2';
+
+function cargarDatos() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+  catch { return {}; }
+}
+
+function guardarDatos() {
+  localStorage.setItem(KEY, JSON.stringify(datos));
+}
+
+// datos[item] = { marcado: bool, cantidad: number }
+let datos = cargarDatos();
+
+function getItem(nombre) {
+  if (!datos[nombre]) datos[nombre] = { marcado: false, cantidad: 1 };
+  return datos[nombre];
+}
+
+function toggleItem(nombre) {
+  const d = getItem(nombre);
+  d.marcado = !d.marcado;
+  if (d.marcado && d.cantidad < 1) d.cantidad = 1;
+  guardarDatos();
+  renderTodo();
+}
+
+function cambiarCantidad(nombre, delta, event) {
+  event.stopPropagation();
+  const d = getItem(nombre);
+  d.cantidad = Math.max(1, (d.cantidad || 1) + delta);
+  guardarDatos();
+  renderTodo();
+}
+
+function contarNecesita() {
+  return Object.values(datos).filter(v => v.marcado).length;
+}
+
+function renderInventario() {
+  const cont = document.getElementById('contenido-inventario');
+  let html = '';
+  CATEGORIAS.forEach(cat => {
+    const itemsNecesitan = cat.items.filter(i => (datos[i]||{}).marcado).length;
+    html += `<div class="categoria">
+      <div class="categoria-header">
+        <span class="emoji">${cat.emoji}</span>
+        <span>${cat.nombre}</span>
+        ${itemsNecesitan > 0 ? `<span class="badge">⚠️ ${itemsNecesitan}</span>` : ''}
+      </div>
+      <div class="categoria-items">`;
+    cat.items.forEach(item => {
+      const d = datos[item] || { marcado: false, cantidad: 1 };
+      const marcado = d.marcado;
+      const cant = d.cantidad || 1;
+      const safeItem = item.replace(/'/g, "\\'");
+      html += `<div class="item ${marcado ? 'necesita' : ''}" onclick="toggleItem('${safeItem}')">
+        <div class="item-check">${marcado ? '⚠️' : ''}</div>
+        <span class="item-nombre">${item}</span>
+        ${marcado ? `
+        <div class="cantidad-ctrl" onclick="event.stopPropagation()">
+          <button class="btn-cant" onclick="cambiarCantidad('${safeItem}', -1, event)">−</button>
+          <span class="cant-num">${cant}</span>
+          <button class="btn-cant" onclick="cambiarCantidad('${safeItem}', 1, event)">+</button>
+        </div>` : `<span class="item-estado">—</span>`}
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `<button class="btn-reset" onclick="resetear()">🔄 Limpiar todo y empezar de nuevo</button>`;
+  cont.innerHTML = html;
+}
+
+function renderLista() {
+  const cont = document.getElementById('contenido-lista');
+  const items = [];
+  CATEGORIAS.forEach(cat => {
+    cat.items.forEach(item => {
+      const d = datos[item] || {};
+      if (d.marcado) items.push({ nombre: item, cat: cat.nombre, emoji: cat.emoji, cant: d.cantidad || 1 });
+    });
+  });
+
+  if (items.length === 0) {
+    cont.innerHTML = `<div class="vacio"><div class="icono">🎉</div><div>No hay nada marcado para comprar.<br>Ve a "Todo" y marca lo que falta.</div></div>`;
+    return;
+  }
+
+  let html = `<div class="lista-titulo">🛒 ${items.length} producto${items.length !== 1 ? 's' : ''} para comprar</div>`;
+  items.forEach(it => {
+    html += `<div class="lista-item">
+      <span style="font-size:1.3rem">${it.emoji}</span>
+      <span class="lista-item-nombre">${it.nombre}</span>
+      <span class="lista-item-cant">×${it.cant}</span>
+      <span class="lista-item-cat">${it.cat}</span>
+    </div>`;
+  });
+  cont.innerHTML = html;
+}
+
+function renderTodo() {
+  renderInventario();
+  renderLista();
+  const n = contarNecesita();
+  document.getElementById('contadorHeader').textContent =
+    n === 0 ? 'Todo completo ✓' : `${n} producto${n !== 1 ? 's' : ''} para comprar`;
+}
+
+function mostrarTab(tab) {
+  document.getElementById('sec-inventario').classList.toggle('visible', tab === 'inventario');
+  document.getElementById('sec-lista').classList.toggle('visible', tab === 'lista');
+  document.getElementById('tab-inventario').classList.toggle('activo', tab === 'inventario');
+  document.getElementById('tab-lista').classList.toggle('activo', tab === 'lista');
+}
+
+function resetear() {
+  if (confirm('¿Borrar todo y empezar de nuevo?')) {
+    datos = {};
+    guardarDatos();
+    renderTodo();
+  }
+}
+
+function compartirLista() {
+  const items = [];
+  CATEGORIAS.forEach(cat => {
+    cat.items.forEach(item => {
+      const d = datos[item] || {};
+      if (d.marcado) items.push(`• ${item}${(d.cantidad||1) > 1 ? ' x'+d.cantidad : ''}`);
+    });
+  });
+  if (items.length === 0) {
+    alert('No hay nada marcado para comprar todavía.');
+    return;
+  }
+  const texto = `🛒 Lista de mercado:\n\n${items.join('\n')}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Lista de mercado', text: texto })
+      .catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(texto).then(() => alert('✓ Lista copiada. Pégala en WhatsApp.'));
+  } else {
+    prompt('Copia esta lista:', texto);
+  }
+}
+
+renderTodo();
+</script>
+</body>
+</html>
